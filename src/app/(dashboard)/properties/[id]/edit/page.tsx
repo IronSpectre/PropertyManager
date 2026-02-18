@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 import { PropertyForm } from "@/components/properties/property-form";
 
 async function getProperty(id: string) {

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SyncSmoobuButton } from "@/components/properties/sync-smoobu-button";
 
+export const dynamic = "force-dynamic";
+
 async function getProperties() {
   try {
     return await prisma.property.findMany({
