@@ -17,7 +17,8 @@ async function getProperties() {
       },
       orderBy: { createdAt: "desc" },
     });
-  } catch {
+  } catch (error) {
+    console.error("Error fetching properties:", error);
     return [];
   }
 }
