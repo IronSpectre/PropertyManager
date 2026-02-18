@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -36,12 +36,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -89,12 +89,12 @@ model Property {
   dailyRate        Float?
   smoobuId         String?  @unique
   internalId       String?
-  registrationInfo String?  @db.Text
+  registrationInfo String?
   ownerName        String?
   ownerContact     String?
   caretakerId      String?
   payoutAccountId  String?
-  notes            String?  @db.Text
+  notes            String?
   status           PropertyStatus @default(ACTIVE)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -157,7 +157,7 @@ model PropertyImage {
 model PropertyRate {
   id         String   @id @default(cuid())
   propertyId String
-  date       DateTime @db.Date
+  date       DateTime
   rate       Float
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -196,7 +196,7 @@ model Booking {
   totalAmount    Float?
   source         BookingSource @default(DIRECT)
   status         BookingStatus @default(CONFIRMED)
-  notes          String?       @db.Text
+  notes          String?
   syncedAt       DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
@@ -210,7 +210,7 @@ model Message {
   id        String   @id @default(cuid())
   bookingId String
   smoobuId  String?  @unique
-  content   String   @db.Text
+  content   String
   sender    MessageSender
   sentAt    DateTime
   syncedAt  DateTime?
@@ -251,7 +251,7 @@ model CleaningJob {
   scheduledDate DateTime
   completedAt   DateTime?
   status        CleaningJobStatus @default(PENDING)
-  notes         String?           @db.Text
+  notes         String?
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
@@ -274,7 +274,7 @@ model Task {
   id           String       @id @default(cuid())
   propertyId   String?
   title        String
-  description  String?      @db.Text
+  description  String?
   type         TaskType     @default(AD_HOC)
   priority     TaskPriority @default(MEDIUM)
   status       TaskStatus   @default(OPEN)
@@ -297,7 +297,7 @@ model TaskComment {
   id        String   @id @default(cuid())
   taskId    String
   userId    String
-  content   String   @db.Text
+  content   String
   createdAt DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
@@ -405,7 +405,7 @@ model InventoryItem {
   id            String          @id @default(cuid())
   propertyId    String
   name          String
-  description   String?         @db.Text
+  description   String?
   category      InventoryCategory @default(OTHER)
   quantity      Int             @default(1)
   condition     ItemCondition   @default(GOOD)
@@ -416,7 +416,7 @@ model InventoryItem {
   purchaseDate  DateTime?
   purchasePrice Float?
   imagePath     String?
-  notes         String?         @db.Text
+  notes         String?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
