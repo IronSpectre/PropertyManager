@@ -52,6 +52,11 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 RUN mkdir -p /app/data
 RUN chown nextjs:nodejs /app/data
 
+# Store baked-in uploads so we can copy them to volume on first boot
+RUN cp -r /app/public/uploads /app/uploads-seed || true
+RUN mkdir -p /app/public/uploads
+RUN chown -R nextjs:nodejs /app/public/uploads /app/uploads-seed
+
 USER nextjs
 
 EXPOSE 3000
@@ -60,4 +65,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL="file:/app/data/prod.db"
 
-CMD ["sh", "-c", "npx prisma migrate deploy && if [ ! -f /app/data/.seeded ]; then sqlite3 /app/data/prod.db < /app/prisma/seed.sql && touch /app/data/.seeded; fi && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && if [ ! -f /app/data/.seeded ]; then sqlite3 /app/data/prod.db < /app/prisma/seed.sql && cp -rn /app/uploads-seed/* /app/public/uploads/ 2>/dev/null; touch /app/data/.seeded; fi && node server.js"]

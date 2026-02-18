@@ -17,7 +17,10 @@ services:
       - "3000:3000"
     volumes:
       - db-data:/app/data
+      - uploads-data:/app/public/uploads
 
 volumes:
   db-data:
+    driver: local
+  uploads-data:
     driver: local
