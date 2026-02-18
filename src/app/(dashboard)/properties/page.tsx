@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SyncSmoobuButton } from "@/components/properties/sync-smoobu-button";
+import { DeletePropertyButton } from "@/components/properties/delete-property-button";
 
 export const dynamic = "force-dynamic";
 
@@ -100,9 +101,12 @@ export default async function PropertiesPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3">
-                    <span>{property._count.bookings} bookings</span>
-                    <span>{property._count.documents} documents</span>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{property._count.bookings} bookings</span>
+                      <span>{property._count.documents} documents</span>
+                    </div>
+                    <DeletePropertyButton id={property.id} name={property.name} />
                   </div>
                 </CardContent>
               </Card>
