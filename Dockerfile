@@ -43,12 +43,10 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma files (include CLI to avoid npx downloading latest major version)
+# Copy Prisma files
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 # Create data directory for SQLite database
 RUN mkdir -p /app/data
@@ -67,4 +65,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL="file:/app/data/prod.db"
 
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && if [ ! -f /app/data/.seeded ]; then sqlite3 /app/data/prod.db < /app/prisma/seed.sql && cp -rn /app/uploads-seed/* /app/public/uploads/ 2>/dev/null; touch /app/data/.seeded; fi && node server.js"]
+CMD ["sh", "-c", "if [ ! -f /app/data/.seeded ]; then sqlite3 /app/data/prod.db < /app/prisma/migrations/20260218201424_init/migration.sql && sqlite3 /app/data/prod.db < /app/prisma/seed.sql && cp -rn /app/uploads-seed/* /app/public/uploads/ 2>/dev/null; touch /app/data/.seeded; fi && node server.js"]
