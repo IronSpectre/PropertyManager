@@ -57,6 +57,9 @@ RUN cp -r /app/public/uploads /app/uploads-seed || true
 RUN mkdir -p /app/public/uploads
 RUN chown -R nextjs:nodejs /app/public/uploads /app/uploads-seed
 
+COPY --chown=nextjs:nodejs start.sh ./start.sh
+RUN chmod +x /app/start.sh
+
 USER nextjs
 
 EXPOSE 3000
@@ -65,4 +68,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV DATABASE_URL="file:/app/data/prod.db"
 
-CMD ["sh", "-c", "if [ ! -f /app/data/.seeded ]; then sqlite3 /app/data/prod.db < /app/prisma/migrations/20260218201424_init/migration.sql && sqlite3 /app/data/prod.db < /app/prisma/seed.sql && cp -rn /app/uploads-seed/* /app/public/uploads/ 2>/dev/null; touch /app/data/.seeded; fi && node server.js"]
+CMD ["/app/start.sh"]
