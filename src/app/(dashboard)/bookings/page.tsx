@@ -40,6 +40,7 @@ export default function BookingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchBookings = async () => {
     try {
@@ -87,6 +88,24 @@ export default function BookingsPage() {
       toast.error("Failed to sync bookings");
     } finally {
       setIsSyncing(false);
+    }
+  };
+
+  const handleDelete = async (id: string, guestName: string) => {
+    if (!confirm(`Delete booking for ${guestName}?`)) return;
+    setDeletingId(id);
+    try {
+      const response = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
+      if (response.ok) {
+        toast.success("Booking deleted");
+        fetchBookings();
+      } else {
+        toast.error("Failed to delete booking");
+      }
+    } catch {
+      toast.error("Failed to delete booking");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -210,12 +229,21 @@ export default function BookingsPage() {
                       {nights}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/bookings/${booking.id}`}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        View
-                      </Link>
+                      <div className="flex items-center justify-end gap-3">
+                        <Link
+                          href={`/bookings/${booking.id}`}
+                          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          View
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(booking.id, booking.guestName)}
+                          disabled={deletingId === booking.id}
+                          className="text-sm text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+                        >
+                          {deletingId === booking.id ? "..." : "Delete"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
